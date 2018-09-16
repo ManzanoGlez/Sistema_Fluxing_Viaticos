@@ -20,22 +20,20 @@ public class Scanner_Factura {
 
     public Scanner_Factura(String dato, Context contexto) {
 
-        URL_Scanner = dato.contains("verificacfdi") ? dato : null;
 
-        try {
-            URL miUrl = new URL(URL_Scanner);
+        if(dato.contains("&id=") && dato.contains("&re=") && dato.contains("&rr=") && dato.contains("&tt=")) {
 
-            if (URL_Scanner != null) {
-                SacarDatos(miUrl.getQuery());
-            } else {
-                Toast.makeText(contexto, "Codigo QR no es valido", Toast.LENGTH_SHORT).show();
-            }
+            URL_Scanner = dato;
+            SacarDatos(URL_Scanner);
 
-        } catch (MalformedURLException ex) {
+        } else {
+
             Toast.makeText(contexto, "Codigo QR no es valido", Toast.LENGTH_SHORT).show();
         }
-    }
 
+
+
+    }
 
     private void SacarDatos(String result) {
 

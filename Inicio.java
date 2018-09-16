@@ -1,12 +1,12 @@
 package manzano.utj.sistemafluxing;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 import com.google.zxing.Result;
 
+import manzano.utj.sistemafluxing.Fragment.LoginFragment;
 import manzano.utj.sistemafluxing.Funciones.Datos_Locales;
 import manzano.utj.sistemafluxing.Funciones.Scanner_Factura;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -27,21 +28,34 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class Inicio extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener,
-        ZXingScannerView.ResultHandler {
+        ZXingScannerView.ResultHandler,
+        LoginFragment.OnFragmentInteractionListener{
+
+
 
     private ZXingScannerView vista_escaner;
-    String dato_scaneo;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
-
+    Fragment fragment = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(new Datos_Locales(this).ComprobarUsuario()){
-            CargarLayoutInicial();
+        CargarLayoutInicial();
+
+     // new Datos_Locales(this).EliminarUsuario("Usuario");
+        FloatingActionButton fab = findViewById(R.id.Btn_Scanner);
+        if(!new Datos_Locales(this).ComprobarUsuario()){
+            //Carga fragment de conexión com  opcion predeterminada
+
+            fragment = new LoginFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, fragment).commit();
+           new Datos_Locales(this).AgregarUsuario("Manzano");
+
+            fab.setVisibility(View.INVISIBLE);
         }else{
-            new Datos_Locales(this).AgregarUsuario("Manzano");
+            fab.setVisibility(View.VISIBLE);
+
         }
 
     }
@@ -49,9 +63,9 @@ public class Inicio extends AppCompatActivity
     public void CargarLayoutInicial(){
 
         setContentView(R.layout.activity_inicio);
-        
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -61,17 +75,19 @@ public class Inicio extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         PidePermisos();
 
-        //Escanear
-        FloatingActionButton fab = findViewById(R.id.fab);
+ //Escanear
+        FloatingActionButton fab = findViewById(R.id.Btn_Scanner);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Escanear(view);
+           Escanear(view);
             }
         });
+
+
+
     }
 
 
@@ -115,6 +131,7 @@ public class Inicio extends AppCompatActivity
         }
     }
 
+
     //Menu de 3 puntitos
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -156,8 +173,6 @@ public class Inicio extends AppCompatActivity
     }
     //Fin  Menu hamburguesa
 
-
-
     // Escaner
     public void Escanear(View v) {
         vista_escaner = new ZXingScannerView(this);
@@ -169,11 +184,14 @@ public class Inicio extends AppCompatActivity
     // Recibe el resultado del escaneo y lo guarda en la var dato_scaneo
     @Override
     public void handleResult(Result result) {
-        dato_scaneo = result.getText();
+
+        String dato_scaneo = result.getText();
         CargarLayoutInicial();
         vista_escaner.stopCamera();
         new Scanner_Factura(dato_scaneo,this);
     }
+
+    @Override public void onFragmentInteraction(Uri uri) {}
 
 
 }

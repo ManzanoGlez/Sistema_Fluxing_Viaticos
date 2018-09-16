@@ -15,7 +15,7 @@ public class Datos_Locales{
 
 
     public Boolean ComprobarUsuario() {
-        SharedPreferences preferences = contexto.getSharedPreferences("Usuario", Context.MODE_PRIVATE);
+        SharedPreferences preferences = contexto.getSharedPreferences("DataUsuario", Context.MODE_PRIVATE);
         String Usuario = preferences.getString("Usuario", "Usuario no registrado");
 
         System.out.println("El valor del usuario : " + Usuario);
@@ -30,7 +30,7 @@ public class Datos_Locales{
 
     public void AgregarUsuario(String Usuario) {
         // Button btn = v.findViewById(R.id.);
-        SharedPreferences preferences = contexto.getSharedPreferences("Usuario", Context.MODE_PRIVATE);
+        SharedPreferences preferences = contexto.getSharedPreferences("DataUsuario", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("Usuario", Usuario);
         editor.apply();
@@ -40,7 +40,7 @@ public class Datos_Locales{
 
     public void EliminarUsuario(String Usuario) {
         // Button btn = v.findViewById(R.id.);
-        SharedPreferences preferences = contexto.getSharedPreferences("Usuario", Context.MODE_PRIVATE);
+        SharedPreferences preferences = contexto.getSharedPreferences("DataUsuario", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove("Usuario");
         editor.apply();
