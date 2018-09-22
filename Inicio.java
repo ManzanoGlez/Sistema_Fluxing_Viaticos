@@ -23,8 +23,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.google.zxing.Result;
 
+import manzano.utj.sistemafluxing.Fragment.CapturaManualFragment;
 import manzano.utj.sistemafluxing.Fragment.EscanerFragment;
 import manzano.utj.sistemafluxing.Fragment.LoginFragment;
+import manzano.utj.sistemafluxing.Fragment.MiPerfilFragment;
+import manzano.utj.sistemafluxing.Fragment.MisFacturasFragment;
+import manzano.utj.sistemafluxing.Fragment.MisProyectosFragment;
 import manzano.utj.sistemafluxing.Funciones.Datos_Locales;
 import manzano.utj.sistemafluxing.Funciones.Scanner_Factura;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -33,7 +37,13 @@ public class Inicio extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener,
         LoginFragment.OnFragmentInteractionListener,
-        EscanerFragment.OnFragmentInteractionListener{
+        EscanerFragment.OnFragmentInteractionListener,
+        CapturaManualFragment.OnFragmentInteractionListener,
+        MisFacturasFragment.OnFragmentInteractionListener,
+        MiPerfilFragment.OnFragmentInteractionListener,
+
+
+      MisProyectosFragment.OnFragmentInteractionListener{
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
 
@@ -152,16 +162,16 @@ public class Inicio extends AppCompatActivity
             fragment = new EscanerFragment();
 
         } else if (id == R.id.nav_captura_manual) {
-            fragment = new EscanerFragment();
+            fragment = new CapturaManualFragment();
 
         } else if (id == R.id.nav_mis_facturas) {
-            fragment = new EscanerFragment();
+            fragment = new MisFacturasFragment();
 
         } else if (id == R.id.nav_perfil) {
-            fragment = new EscanerFragment();
+            fragment = new MiPerfilFragment();
 
         } else if (id == R.id.nav_proyectos) {
-            fragment = new EscanerFragment();
+            fragment = new MisProyectosFragment();
         }
 
         getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, fragment ).commit();
