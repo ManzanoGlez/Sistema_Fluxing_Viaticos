@@ -1,6 +1,7 @@
 package manzano.utj.sistemafluxing;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import com.google.zxing.Result;
 
+import manzano.utj.sistemafluxing.Fragment.EscanerFragment;
 import manzano.utj.sistemafluxing.Fragment.LoginFragment;
 import manzano.utj.sistemafluxing.Funciones.Datos_Locales;
 import manzano.utj.sistemafluxing.Funciones.Scanner_Factura;
@@ -30,43 +32,30 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 public class Inicio extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener,
-        ZXingScannerView.ResultHandler,
-        LoginFragment.OnFragmentInteractionListener{
+        LoginFragment.OnFragmentInteractionListener,
+        EscanerFragment.OnFragmentInteractionListener{
 
-
-    private ZXingScannerView vista_escaner;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
-    Fragment fragment = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         CargarLayoutInicial();
         PidePermisos();
-
-       CerrarSesion();
-
-
         ValidarSesion();
 
     }
 
 
     public void ValidarSesion(){
-
-        FloatingActionButton fab = findViewById(R.id.Btn_Scanner);
-
         if(!new Datos_Locales(this).ComprobarUsuario()){
             //Carga fragment de conexión com  opcion predeterminada
             getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, new LoginFragment()).commit();
-
             getSupportActionBar().hide();
-            fab.setVisibility(View.INVISIBLE);
         }else{
-
             getSupportActionBar().show();
-            fab.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, new EscanerFragment()).commit();
         }
     }
 
@@ -88,19 +77,6 @@ public class Inicio extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-
-
- //Escanear
-        FloatingActionButton fab = findViewById(R.id.Btn_Scanner);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-           Escanear(view);
-            }
-        });
-
-
 
     }
 
@@ -139,11 +115,10 @@ public class Inicio extends AppCompatActivity
                 super.onBackPressed();
             }
         }catch (NullPointerException e){
-            CargarLayoutInicial();
-            vista_escaner.stopCamera();
+            Intent intent = new Intent(this, Inicio.class);
+            startActivity(intent);
         }
     }
-
 
     //Menu de 3 puntitos
     @Override
@@ -156,6 +131,10 @@ public class Inicio extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+
+            CerrarSesion();
+            ValidarSesion();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -167,42 +146,30 @@ public class Inicio extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Fragment fragment = null;
 
         if (id == R.id.nav_scaner) {
+            fragment = new EscanerFragment();
 
         } else if (id == R.id.nav_captura_manual) {
+            fragment = new EscanerFragment();
 
         } else if (id == R.id.nav_mis_facturas) {
+            fragment = new EscanerFragment();
 
         } else if (id == R.id.nav_perfil) {
+            fragment = new EscanerFragment();
 
         } else if (id == R.id.nav_proyectos) {
-
+            fragment = new EscanerFragment();
         }
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, fragment ).commit();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
     //Fin  Menu hamburguesa
-
-    // Escaner
-    public void Escanear(View v) {
-        vista_escaner = new ZXingScannerView(this);
-        vista_escaner.setResultHandler(this);
-        setContentView(vista_escaner);
-        vista_escaner.startCamera();
-    }
-
-    // Recibe el resultado del escaneo y lo guarda en la var dato_scaneo
-    @Override
-    public void handleResult(Result result) {
-
-        String dato_scaneo = result.getText();
-        CargarLayoutInicial();
-        vista_escaner.stopCamera();
-        new Scanner_Factura(dato_scaneo,this);
-    }
 
     @Override public void onFragmentInteraction(Uri uri) {}
 

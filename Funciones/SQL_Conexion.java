@@ -61,43 +61,6 @@ public class SQL_Conexion {
         return Connected;
     }
 
-    /*
-    public Boolean Login(String user, String password) {
-
-        boolean Validate = false;
-    //    Validate_Connection();
-        if (!Validate_Connection()) {
-            System.out.println("No se pudo conectar a la BD");
-        } else {
-
-            try {
-                ResultSet rs;
-                PreparedStatement pst;
-
-                String Query = "exec [dbo].[sp_Login_Usuarios] ?,?;";
-                pst = ConnectSQL().prepareStatement(Query);
-                pst.setString(1,user);
-                pst.setString(2,password);
-                ConnectSQL().prepareStatement(Query);
-                rs = pst.executeQuery();
-
-                while (rs.next()) {
-                    Validate = true;
-                    System.out.println(rs.getString(3).trim());
-                }
-
-
-            } catch (SQLException e) {
-                System.out.println("SQL  error : " + e.getMessage());
-            } catch (NullPointerException e) {
-                System.out.println("null error : " + e.getMessage());
-            }
-        }
-
-        return Validate;
-
-            }
-*/
 }
 
 

@@ -3,10 +3,15 @@ package manzano.utj.sistemafluxing.Funciones;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.google.zxing.Result;
+
 import java.text.DecimalFormat;
 
+import manzano.utj.sistemafluxing.Fragment.EscanerFragment;
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class Scanner_Factura {
+
+public class Scanner_Factura{
 
 
     private String URL_Factura;
@@ -14,6 +19,10 @@ public class Scanner_Factura {
     private String RFCEmisor = null;
     private String Monto = null;
     private String FolioFiscal = null;
+
+
+
+
 
 
     public Scanner_Factura(String dato, Context contexto) {
@@ -60,5 +69,6 @@ public class Scanner_Factura {
          salida = salida.replaceFirst ("^0*", "");;
          return salida;
   }
+
 
 }

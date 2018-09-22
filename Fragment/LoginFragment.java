@@ -1,10 +1,12 @@
 package manzano.utj.sistemafluxing.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,15 +33,13 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
         final EditText Txt_Email = view.findViewById(R.id.Txt_Email);
         final EditText Txt_password = view.findViewById(R.id.Txt_password);
         Button Btn_inicioSesion = view.findViewById(R.id.Btn_inicioSesion);
-
-
 
         //Todo Inicio de sesión
         Btn_inicioSesion.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +64,6 @@ public class LoginFragment extends Fragment {
                  return;
              }
 
-
              if (Txt_password.getText().toString().length() < 5) {
                  snackbar = Snackbar.make(getView(), "La contraseña debe tener al menos 6 digitos", Snackbar.LENGTH_LONG);
                  snackbar.show();
@@ -72,15 +71,11 @@ public class LoginFragment extends Fragment {
 
              }
         }
-
                    try {
-
 
                         ResultSet rs;
                         PreparedStatement pst;
 
-                      //  String Query = "exec sp_Login_Usuarios 'jorge@fluxing.com','12345';";
-                      //  String Query = "exec sp_Login_Usuarios '1','1';";
                           String Query = "exec sp_Login_Usuarios ?,?;";
                         pst = sql.ConnectSQL().prepareStatement(Query);
 
@@ -103,12 +98,11 @@ public class LoginFragment extends Fragment {
                 String correo = rs.getString(14);
 
                   new Datos_Locales(getContext()).AgregarUsuario(rs.getString(2).trim());
-                  new Inicio().CargarLayoutInicial();
-                  System.out.println(rs.getString(2).trim());
+
+                                Intent intent = new Intent(getActivity(), Inicio.class);
+                                getActivity().startActivity(intent);
 
                             }
-
-
                         }
 
 
@@ -122,14 +116,14 @@ public class LoginFragment extends Fragment {
                     System.out.println("Error general : " + e.getMessage());
                 }
 
-                }
-
-
+          }
             }
         });
 
 
-        return view;
+
+
+     return view;
     }
 
     public static LoginFragment newInstance(String param1, String param2) {
