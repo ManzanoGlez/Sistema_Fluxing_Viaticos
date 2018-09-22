@@ -3,15 +3,13 @@ package manzano.utj.sistemafluxing.Funciones;
 import android.content.Context;
 import android.widget.Toast;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DecimalFormat;
 
 
 public class Scanner_Factura {
 
 
-    private String URL_Scanner;
+    private String URL_Factura;
     private String RFCReceptor = null;
     private String RFCEmisor = null;
     private String Monto = null;
@@ -23,11 +21,9 @@ public class Scanner_Factura {
 
         if(dato.contains("&id=") && dato.contains("&re=") && dato.contains("&rr=") && dato.contains("&tt=")) {
 
-            URL_Scanner = dato;
-            SacarDatos(URL_Scanner);
-
+            URL_Factura = dato;
+            SacarDatos(URL_Factura);
         } else {
-
             Toast.makeText(contexto, "Codigo QR no es valido", Toast.LENGTH_SHORT).show();
         }
 
@@ -49,7 +45,7 @@ public class Scanner_Factura {
 
         }
 
-        System.out.println(URL_Scanner);
+        System.out.println(URL_Factura);
         System.out.println(FolioFiscal);
         System.out.println(RFCEmisor);
         System.out.println(RFCReceptor);

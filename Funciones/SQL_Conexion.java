@@ -61,6 +61,7 @@ public class SQL_Conexion {
         return Connected;
     }
 
+    /*
     public Boolean Login(String user, String password) {
 
         boolean Validate = false;
@@ -75,14 +76,14 @@ public class SQL_Conexion {
 
                 String Query = "exec [dbo].[sp_Login_Usuarios] ?,?;";
                 pst = ConnectSQL().prepareStatement(Query);
-                pst.setString(1,"1");
-                pst.setString(2,"1");
+                pst.setString(1,user);
+                pst.setString(2,password);
                 ConnectSQL().prepareStatement(Query);
                 rs = pst.executeQuery();
 
                 while (rs.next()) {
                     Validate = true;
-                    System.out.println(rs.getString(2).trim());
+                    System.out.println(rs.getString(3).trim());
                 }
 
 
@@ -94,10 +95,11 @@ public class SQL_Conexion {
         }
 
         return Validate;
-    }
 
-
+            }
+*/
 }
+
 
 
 

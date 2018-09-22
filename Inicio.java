@@ -17,6 +17,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import com.google.zxing.Result;
 
@@ -32,7 +34,6 @@ public class Inicio extends AppCompatActivity
         LoginFragment.OnFragmentInteractionListener{
 
 
-
     private ZXingScannerView vista_escaner;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
     Fragment fragment = null;
@@ -42,22 +43,35 @@ public class Inicio extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         CargarLayoutInicial();
+        PidePermisos();
 
-     // new Datos_Locales(this).EliminarUsuario("Usuario");
+       CerrarSesion();
+
+
+        ValidarSesion();
+
+    }
+
+
+    public void ValidarSesion(){
+
         FloatingActionButton fab = findViewById(R.id.Btn_Scanner);
+
         if(!new Datos_Locales(this).ComprobarUsuario()){
             //Carga fragment de conexión com  opcion predeterminada
+            getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, new LoginFragment()).commit();
 
-            fragment = new LoginFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, fragment).commit();
-           new Datos_Locales(this).AgregarUsuario("Manzano");
-
+            getSupportActionBar().hide();
             fab.setVisibility(View.INVISIBLE);
         }else{
+
+            getSupportActionBar().show();
             fab.setVisibility(View.VISIBLE);
-
         }
+    }
 
+    public void CerrarSesion(){
+        new Datos_Locales(this).EliminarUsuario("Usuario");
     }
 
     public void CargarLayoutInicial(){
@@ -75,7 +89,7 @@ public class Inicio extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        PidePermisos();
+
 
  //Escanear
         FloatingActionButton fab = findViewById(R.id.Btn_Scanner);
@@ -89,7 +103,6 @@ public class Inicio extends AppCompatActivity
 
 
     }
-
 
     public void PidePermisos() {//Permiso de camara
 

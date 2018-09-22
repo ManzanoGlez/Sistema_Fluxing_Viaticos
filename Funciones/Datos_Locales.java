@@ -30,6 +30,12 @@ public class Datos_Locales{
 
     public void AgregarUsuario(String Usuario) {
         // Button btn = v.findViewById(R.id.);
+
+
+
+
+
+
         SharedPreferences preferences = contexto.getSharedPreferences("DataUsuario", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("Usuario", Usuario);
