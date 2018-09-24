@@ -26,10 +26,12 @@ public class SQL_Conexion {
     @SuppressLint("NewApi")
     public Connection ConnectSQL() {
 
-        IP = "Fluxing.ddns.net:1433";
+       // IP = "Fluxing.ddns.net:1433";
+        IP = "192.168.1.4:1433";
         DB = "Fluxing_Viaticos";
         User = "sa";
-        Password = "Flux1ng2017";
+      //  Password = "Flux1ng2017";
+        Password = "12345";
         Connection connection = null;
 
         try {

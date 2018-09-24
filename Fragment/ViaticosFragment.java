@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import manzano.utj.sistemafluxing.R;
 
 
-public class MisFacturasFragment extends Fragment {
+public class ViaticosFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public MisFacturasFragment() {
+    public ViaticosFragment() {
         // Required empty public constructor
     }
 
@@ -24,7 +24,7 @@ public class MisFacturasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mis_facturas, container, false);
+        return inflater.inflate(R.layout.fragment_viaticos, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -56,8 +56,6 @@ public class LoginFragment extends Fragment {
 
                 } else {
 
-        if(!Txt_Email.getText().toString().equals("1") && !Txt_Email.getText().toString().equals("1")) { // 1 1 para pruebas rapidas
-
              if (Txt_Email.getText().toString().isEmpty() || !Txt_Email.getText().toString().contains("@")) {
                  snackbar = Snackbar.make(getView(), "Debes poner un correo valido", Snackbar.LENGTH_LONG);
                  snackbar.show();
@@ -70,7 +68,6 @@ public class LoginFragment extends Fragment {
                  return;
 
              }
-        }
                    try {
 
                         ResultSet rs;
@@ -78,7 +75,6 @@ public class LoginFragment extends Fragment {
 
                           String Query = "exec sp_Login_Usuarios ?,?;";
                         pst = sql.ConnectSQL().prepareStatement(Query);
-
 
                         pst.setString(1, Txt_Email.getText().toString());
                         pst.setString(2, Txt_password.getText().toString());
@@ -94,26 +90,27 @@ public class LoginFragment extends Fragment {
 
                             }else{
 
-               Toast.makeText(getContext(), "Bienvenido " + rs.getString(2), Toast.LENGTH_SHORT).show();
-                String correo = rs.getString(14);
+                                String id = rs.getString(1);
+                                String Usuario = rs.getString(2) + " " + rs.getString(3) ;
+                                String correo = rs.getString(14);
 
-                  new Datos_Locales(getContext()).AgregarUsuario(rs.getString(2).trim());
+                  new Datos_Locales(getContext()).AgregarUsuario(Usuario.trim(),correo.trim(),id.trim());
+                   Toast.makeText(getContext(), "Bienvenido " + Usuario, Toast.LENGTH_SHORT).show();
 
                                 Intent intent = new Intent(getActivity(), Inicio.class);
                                 getActivity().startActivity(intent);
-
                             }
                         }
 
-
-
                     } catch (SQLException e) {
                         System.out.println("SQL  error : " + e.getMessage());
+                       Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     } catch (NullPointerException e) {
                         System.out.println("null error : " + e.getMessage());
-
+                       Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     System.out.println("Error general : " + e.getMessage());
+                       Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
           }

@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,20 +16,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
-import com.google.zxing.Result;
 
 import manzano.utj.sistemafluxing.Fragment.CapturaManualFragment;
 import manzano.utj.sistemafluxing.Fragment.EscanerFragment;
 import manzano.utj.sistemafluxing.Fragment.LoginFragment;
 import manzano.utj.sistemafluxing.Fragment.MiPerfilFragment;
-import manzano.utj.sistemafluxing.Fragment.MisFacturasFragment;
+import manzano.utj.sistemafluxing.Fragment.ViaticosFragment;
 import manzano.utj.sistemafluxing.Fragment.MisProyectosFragment;
 import manzano.utj.sistemafluxing.Funciones.Datos_Locales;
-import manzano.utj.sistemafluxing.Funciones.Scanner_Factura;
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class Inicio extends AppCompatActivity
         implements
@@ -39,11 +32,9 @@ public class Inicio extends AppCompatActivity
         LoginFragment.OnFragmentInteractionListener,
         EscanerFragment.OnFragmentInteractionListener,
         CapturaManualFragment.OnFragmentInteractionListener,
-        MisFacturasFragment.OnFragmentInteractionListener,
+        ViaticosFragment.OnFragmentInteractionListener,
         MiPerfilFragment.OnFragmentInteractionListener,
-
-
-      MisProyectosFragment.OnFragmentInteractionListener{
+        MisProyectosFragment.OnFragmentInteractionListener{
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
 
@@ -60,7 +51,7 @@ public class Inicio extends AppCompatActivity
 
     public void ValidarSesion(){
         if(!new Datos_Locales(this).ComprobarUsuario()){
-            //Carga fragment de conexión com  opcion predeterminada
+            //Carga fragment de conexión con  opcion predeterminada
             getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, new LoginFragment()).commit();
             getSupportActionBar().hide();
         }else{
@@ -70,7 +61,7 @@ public class Inicio extends AppCompatActivity
     }
 
     public void CerrarSesion(){
-        new Datos_Locales(this).EliminarUsuario("Usuario");
+        new Datos_Locales(this).EliminarUsuario();
     }
 
     public void CargarLayoutInicial(){
@@ -164,8 +155,8 @@ public class Inicio extends AppCompatActivity
         } else if (id == R.id.nav_captura_manual) {
             fragment = new CapturaManualFragment();
 
-        } else if (id == R.id.nav_mis_facturas) {
-            fragment = new MisFacturasFragment();
+        } else if (id == R.id.nav_viaticos) {
+            fragment = new ViaticosFragment();
 
         } else if (id == R.id.nav_perfil) {
             fragment = new MiPerfilFragment();
