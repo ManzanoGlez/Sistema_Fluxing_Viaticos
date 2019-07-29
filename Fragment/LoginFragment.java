@@ -1,4 +1,4 @@
-package manzano.utj.sistemafluxing.Fragment;
+package app.Emtech.Alesa.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,22 +6,27 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import manzano.utj.sistemafluxing.Funciones.Datos_Locales;
-import manzano.utj.sistemafluxing.Funciones.SQL_Conexion;
-import manzano.utj.sistemafluxing.Inicio;
-import manzano.utj.sistemafluxing.R;
+import android.util.Log;
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import org.apache.http.HttpStatus;
+import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
+import app.Emtech.Alesa.Functions.Auth;
+import app.Emtech.Alesa.StartActivity;
+import app.Emtech.Alesa.R;
 
 
 public class LoginFragment extends Fragment {
@@ -39,89 +44,140 @@ public class LoginFragment extends Fragment {
 
         final EditText Txt_Email = view.findViewById(R.id.Txt_Email);
         final EditText Txt_password = view.findViewById(R.id.Txt_password);
-        Button Btn_inicioSesion = view.findViewById(R.id.Btn_inicioSesion);
+        Button Btn_login = view.findViewById(R.id.Btn_inicioSesion);
 
-        //Todo Inicio de sesión
-        Btn_inicioSesion.setOnClickListener(new View.OnClickListener() {
+        //Todo StartActivity de sesión
+
+        Btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Snackbar snackbar;
-                SQL_Conexion sql = new SQL_Conexion();
-
-                if (!sql.Validate_Connection()) {
-
-                    snackbar = Snackbar.make(getView(), "Sin conexion a internet, intente mas tarde", Snackbar.LENGTH_LONG);
-                    snackbar.show();
-
-                } else {
-
-             if (Txt_Email.getText().toString().isEmpty() || !Txt_Email.getText().toString().contains("@")) {
-                 snackbar = Snackbar.make(getView(), "Debes poner un correo valido", Snackbar.LENGTH_LONG);
-                 snackbar.show();
-                 return;
-             }
-
-             if (Txt_password.getText().toString().length() < 5) {
-                 snackbar = Snackbar.make(getView(), "La contraseña debe tener al menos 6 digitos", Snackbar.LENGTH_LONG);
-                 snackbar.show();
-                 return;
-
-             }
-                   try {
-
-                        ResultSet rs;
-                        PreparedStatement pst;
-
-                          String Query = "exec sp_Login_Usuarios ?,?;";
-                        pst = sql.ConnectSQL().prepareStatement(Query);
-
-                        pst.setString(1, Txt_Email.getText().toString());
-                        pst.setString(2, Txt_password.getText().toString());
-                        sql.ConnectSQL().prepareStatement(Query);
-                        rs = pst.executeQuery();
-
-                        while (rs.next()) {
-
-                            if (rs.getString(1).equals("FALSE")) {
-
-                                snackbar = Snackbar.make(getView(), "Cuenta no encontrada", Snackbar.LENGTH_LONG);
-                                snackbar.show();
-
-                            }else{
-
-                                String id = rs.getString(1);
-                                String Usuario = rs.getString(2) + " " + rs.getString(3) ;
-                                String correo = rs.getString(14);
-
-                  new Datos_Locales(getContext()).AgregarUsuario(Usuario.trim(),correo.trim(),id.trim());
-                   Toast.makeText(getContext(), "Bienvenido " + Usuario, Toast.LENGTH_SHORT).show();
-
-                                Intent intent = new Intent(getActivity(), Inicio.class);
-                                getActivity().startActivity(intent);
-                            }
-                        }
-
-                    } catch (SQLException e) {
-                        System.out.println("SQL  error : " + e.getMessage());
-                       Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    } catch (NullPointerException e) {
-                        System.out.println("null error : " + e.getMessage());
-                       Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    System.out.println("Error general : " + e.getMessage());
-                       Toast.makeText(getContext(), "Error " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                if (Txt_Email.getText().toString().isEmpty() || !Txt_Email.getText().toString().contains("@")) {
+                    Snackbar.make(getView(), "Debes poner un correo valido", Snackbar.LENGTH_LONG).show();
+                    return;
                 }
 
-          }
+                if (Txt_password.getText().toString().length() < 5) {
+                    Snackbar.make(getView(), "La contraseña debe tener al menos 6 digitos", Snackbar.LENGTH_LONG).show();
+                    return;
+
+                }
+
+                // consulta o  servicio para obtener los sig valores
+                loginService(Txt_Email.getText().toString(), Txt_password.getText().toString());
             }
         });
 
 
-
-
-     return view;
+        return view;
     }
+
+
+    public void loginService(final String email, final String password) {
+
+
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+
+        String url = getString(R.string.EndPoint) + "user/login";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                        new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String request) {
+
+                        try {
+
+                            JSONObject requestJson = new JSONObject(request);
+                              JSONObject success = requestJson.getJSONObject("success");
+
+                         JSONObject user = success.getJSONObject("user");
+
+                            String id = user.getString("id");
+                            String name = user.getString("name");
+                            String email = user.getString("email");
+                            String api_token = success.getString("api_token");
+
+                      new Auth(getContext()).setAuth(id, name, email, api_token);
+                            Intent intent = new Intent(getActivity(), StartActivity.class);
+                            getActivity().startActivity(intent);
+
+
+                        } catch (Exception e) {
+                            Log.e("JSON RESPONSE", e.getMessage());
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.e("VOLLEY_onErrorResponse", error.toString());
+                String jsonError = null;
+                try {
+
+                    NetworkResponse networkResponse = error.networkResponse;
+                    if (networkResponse != null && networkResponse.data != null) {
+
+                        jsonError = new String(networkResponse.data);
+
+                        JSONObject errorJson = new JSONObject(jsonError);
+
+                        if (networkResponse.statusCode == HttpStatus.SC_BAD_REQUEST) {
+                            // HTTP Status Code: 400 Unauthorized
+                            String errorText = (String) errorJson.get("error");
+                            Snackbar.make(getView(), errorText, Snackbar.LENGTH_LONG).show();
+                            System.out.println(errorText);
+                        }
+
+                        if (networkResponse.statusCode == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+                            // HTTP Status Code: 422 Unauthorized
+                            JSONObject errorData = errorJson.getJSONObject("error");
+                            if (errorData.has("email")) {
+                                String errorMessage = errorData.getJSONArray("email").get(0).toString();
+                                Snackbar.make(getView(), errorMessage, Snackbar.LENGTH_LONG).show();
+                                System.out.println(errorMessage);
+                            }
+
+                            if (errorData.has("password")) {
+                                String errorMessage = errorData.getJSONArray("password").get(0).toString();
+                                Snackbar.make(getView(), errorMessage, Snackbar.LENGTH_LONG).show();
+                                System.out.println(errorMessage);
+                            }
+
+
+                        }
+
+
+                        if (networkResponse.statusCode == HttpStatus.SC_INTERNAL_SERVER_ERROR || networkResponse.statusCode == HttpStatus.SC_NOT_FOUND) {
+                            // HTTP Status Code: 500 Unauthorized
+                            Snackbar.make(getView(), "Revisa tu conexión a Internet", Snackbar.LENGTH_LONG).show();
+                            System.out.println("Revisa tu conexión a Internet");
+                        }
+
+                    }
+
+                } catch (Throwable t) {
+                    Log.e("JSON RESPONSE", "Could not parse malformed JSON: " + jsonError);
+                }
+
+            }
+        }) {
+            //adding parameters to the request
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("email", email);
+                params.put("password", password);
+                return params;
+            }
+        };
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+
+    }
+
 
     public static LoginFragment newInstance(String param1, String param2) {
         LoginFragment fragment = new LoginFragment();
@@ -154,6 +210,7 @@ public class LoginFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);

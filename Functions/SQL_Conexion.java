@@ -1,4 +1,4 @@
-package manzano.utj.sistemafluxing.Funciones;
+package app.Emtech.Alesa.Functions;
 
 /**
  * Created by jorge on 12/01/2018.
@@ -7,17 +7,10 @@ package manzano.utj.sistemafluxing.Funciones;
 import android.annotation.SuppressLint;
 import android.os.StrictMode;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-
-//Fluxing.ddns.net:1433  -- Remota
-//192.168.15.131:1433   -- local
 
 public class SQL_Conexion {
 
@@ -26,12 +19,20 @@ public class SQL_Conexion {
     @SuppressLint("NewApi")
     public Connection ConnectSQL() {
 
-       // IP = "Fluxing.ddns.net:1433";
-        IP = "192.168.1.4:1433";
+     //LOCAL
+        IP = "192.168.43.135:1433";
         DB = "Fluxing_Viaticos";
         User = "sa";
-      //  Password = "Flux1ng2017";
         Password = "12345";
+
+      /*
+    //   REMOTO
+       IP = "sql5037.site4now.net:1433";
+        DB = "DB_A414F1_FluxingViaticos";
+        User = "DB_A414F1_FluxingViaticos_admin";
+        Password = "Manzanoglez1995";
+*/
+
         Connection connection = null;
 
         try {

@@ -1,4 +1,4 @@
-package manzano.utj.sistemafluxing;
+package app.Emtech.Alesa;
 
 import android.Manifest;
 import android.content.Intent;
@@ -18,23 +18,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import manzano.utj.sistemafluxing.Fragment.CapturaManualFragment;
-import manzano.utj.sistemafluxing.Fragment.EscanerFragment;
-import manzano.utj.sistemafluxing.Fragment.LoginFragment;
-import manzano.utj.sistemafluxing.Fragment.MiPerfilFragment;
-import manzano.utj.sistemafluxing.Fragment.ViaticosFragment;
-import manzano.utj.sistemafluxing.Fragment.MisProyectosFragment;
-import manzano.utj.sistemafluxing.Funciones.Datos_Locales;
+import app.Emtech.Alesa.Fragment.DetailReceiptFragment;
+import app.Emtech.Alesa.Fragment.ReceiptsFragment;
+import app.Emtech.Alesa.Fragment.LoginFragment;
+import app.Emtech.Alesa.Fragment.MyProfileFragment;
+import app.Emtech.Alesa.Functions.Auth;
 
-public class Inicio extends AppCompatActivity
-        implements
+public class StartActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         LoginFragment.OnFragmentInteractionListener,
-        EscanerFragment.OnFragmentInteractionListener,
-        CapturaManualFragment.OnFragmentInteractionListener,
-        ViaticosFragment.OnFragmentInteractionListener,
-        MiPerfilFragment.OnFragmentInteractionListener,
-        MisProyectosFragment.OnFragmentInteractionListener{
+        DetailReceiptFragment.OnFragmentInteractionListener,
+        ReceiptsFragment.OnFragmentInteractionListener,
+        MyProfileFragment.OnFragmentInteractionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
 
@@ -42,31 +37,25 @@ public class Inicio extends AppCompatActivity
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        CargarLayoutInicial();
-        PidePermisos();
-        ValidarSesion();
-
+        loadMainLayout();
+        requestPermission();
+        checkSession();
     }
 
 
-    public void ValidarSesion(){
-        if(!new Datos_Locales(this).ComprobarUsuario()){
-            //Carga fragment de conexión con  opcion predeterminada
-            getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, new LoginFragment()).commit();
+    public void checkSession() {
+        if (!new Auth(this).checkAuth()) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, new LoginFragment()).commit();
             getSupportActionBar().hide();
-        }else{
+        } else {
             getSupportActionBar().show();
-            getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, new EscanerFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, new ReceiptsFragment()).commit();
         }
     }
 
-    public void CerrarSesion(){
-        new Datos_Locales(this).EliminarUsuario();
-    }
+    public void loadMainLayout() {
 
-    public void CargarLayoutInicial(){
-
-        setContentView(R.layout.activity_inicio);
+        setContentView(R.layout.burger_menu);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -81,14 +70,14 @@ public class Inicio extends AppCompatActivity
 
     }
 
-    public void PidePermisos() {//Permiso de camara
+    public void requestPermission() {//Permiso de camara
 
         /*Pide el permiso la primera vez que abre la app*/
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
             System.out.println("Permiso Activado");
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
-            Toast.makeText(this, "La applicación no podra funcionar con normalidad sin el permiso de la camara.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "La aplicación no podra funcionar con normalidad sin el permiso de la camara.", Toast.LENGTH_SHORT).show();
         }
 
         /*Pide el permiso si detecta que se quito el permiso que abre la app*/
@@ -115,8 +104,8 @@ public class Inicio extends AppCompatActivity
             } else {
                 super.onBackPressed();
             }
-        }catch (NullPointerException e){
-            Intent intent = new Intent(this, Inicio.class);
+        } catch (NullPointerException e) {
+            Intent intent = new Intent(this, StartActivity.class);
             startActivity(intent);
         }
     }
@@ -131,11 +120,10 @@ public class Inicio extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.btn_menu_logout) {
 
-            CerrarSesion();
-            ValidarSesion();
-
+            new Auth(this).logout();
+            checkSession();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -150,29 +138,18 @@ public class Inicio extends AppCompatActivity
         Fragment fragment = null;
 
         if (id == R.id.nav_scaner) {
-            fragment = new EscanerFragment();
-
-        } else if (id == R.id.nav_captura_manual) {
-            fragment = new CapturaManualFragment();
-
-        } else if (id == R.id.nav_viaticos) {
-            fragment = new ViaticosFragment();
-
-        } else if (id == R.id.nav_perfil) {
-            fragment = new MiPerfilFragment();
-
-        } else if (id == R.id.nav_proyectos) {
-            fragment = new MisProyectosFragment();
+             fragment = new ReceiptsFragment();
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.Contenedor, fragment ).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
     //Fin  Menu hamburguesa
 
-    @Override public void onFragmentInteraction(Uri uri) {}
+    @Override
+    public void onFragmentInteraction(Uri uri) {}
 
 
 }

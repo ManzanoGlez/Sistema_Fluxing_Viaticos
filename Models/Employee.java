@@ -1,6 +1,6 @@
-package manzano.utj.sistemafluxing.Modelos;
+package app.Emtech.Alesa.Models;
 
-public class Empleado {
+public class Employee {
 
     private String NSS, Nombres, Apellidos, Direccion,
             Telefono, RFC, Fecha_Nacimiento,
@@ -14,12 +14,12 @@ public class Empleado {
     public static String Query_Delete = "exec [dbo].[sp_Baja_Empleado] ?";
     public static String Query_Insert = "exec [dbo].[sp_Alta_Empleado] ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?;";
     public static String Query_Update = "exec [dbo].[sp_Modificar_Empleado] ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?;";
-    public static String Query_Select_Where = "SELECT e.NSS,e.Nombres,e.Apellidos,e.Direccion,e.Telefono,e.RFC,convert(varchar, e.Fecha_Nacimiento, 101) as Fecha_Nacimiento,e.CURP,e.Correo,convert(varchar, e.Fecha_Ingreso, 101),e.Puesto,e.Area,e.Sueldo,CONVERT(VARCHAR(50),DECRYPTBYPASSPHRASE('Secreto',u.Contraseña)),u.Tipo FROM empleado e JOIN usuario u ON e.ID_Empleado = u.ID_Empleado WHERE e.ID_Empleado = ?";
-    public static String Query_Combo_Vendedores = "SELECT CONCAT(Nombres, ' - ', Apellidos) As Empleado FROM Empleado WHERE Estatus != 'Eliminado';";
+    public static String Query_Select_Where = "SELECT e.NSS,e.Nombres,e.Apellidos,e.Direccion,e.Telefono,e.RFC,convert(varchar, e.Fecha_Nacimiento, 101) as Fecha_Nacimiento,e.CURP,e.Correo,convert(varchar, e.Fecha_Ingreso, 101) as Fecha_ingreso,e.Puesto,e.Area,e.Sueldo,CONVERT(VARCHAR(50),DECRYPTBYPASSPHRASE('Secreto',u.Contraseña)),u.Tipo FROM empleado e JOIN usuario u ON e.ID_Empleado = u.ID_Empleado WHERE e.ID_Empleado = ?";
+    public static String Query_Combo_Vendedores = "SELECT CONCAT(Nombres, ' - ', Apellidos) As Employee FROM Employee WHERE Estatus != 'Eliminado';";
     public static String Query_Estatus_Viajes = "exec [sp_Verificar_Viaje] ?";
 
 
-    public Empleado() {
+    public Employee() {
 
         this.setNombres(null);
         this.setApellidos(null);
@@ -37,7 +37,7 @@ public class Empleado {
     }
 
     // Completo
-    public Empleado(String NSS, String Nombres, String Apellidos, String Direccion, String Telefono, String RFC, String Fecha_Nacimiento, String CURP, String Correo, String Fecha_Ingreso, String Puesto, String Area, double Sueldo) {
+    public Employee(String NSS, String Nombres, String Apellidos, String Direccion, String Telefono, String RFC, String Fecha_Nacimiento, String CURP, String Correo, String Fecha_Ingreso, String Puesto, String Area, double Sueldo) {
 
         this.NSS = NSS;
         this.Nombres = Nombres;
@@ -56,7 +56,7 @@ public class Empleado {
 
 
     //Tabla CRUD
-    public Empleado(int ID_Empleado, String Nombre, String Correo, String Telefono, String Puesto, String Area) {
+    public Employee(int ID_Empleado, String Nombre, String Correo, String Telefono, String Puesto, String Area) {
         this.ID_Empleado = ID_Empleado;
         this.Nombres = Nombre;
         this.Correo = Correo;
